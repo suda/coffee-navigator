@@ -1,0 +1,15 @@
+{
+  "name": "coffee-navigator",
+  "main": "./lib/coffee-navigator",
+  "version": "0.0.1",
+  "description": "Code navigation panel for Coffee Script",
+  "activationEvents": ["coffee-navigator:toggle"],
+  "repository": "https://github.com/suda/coffee-navigator",
+  "license": "MIT",
+  "engines": {
+    "atom": ">0.50.0"
+  },
+  "dependencies": {
+    "coffee-script": "*"
+  }
+}
