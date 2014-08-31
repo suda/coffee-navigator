@@ -58,10 +58,15 @@ class CoffeeNavigatorView extends View
     element = null
     if expression.value?.constructor.name == 'Code'
       value = @parseValue(expression.variable)
+      if expression.value.bound
+        icon = 'icon-bound'
+      else
+        icon = 'icon-unbound'
+
       element = $$ ->
         @li class: 'list-nested-item', =>
           @div class: 'list-item', =>
-            @span class: 'icon icon-code', value
+            @span class: 'icon ' + icon, value
       element.append @parseBlock(expression.value.body)
 
     else if expression.value?.constructor.name == 'Class'
@@ -81,7 +86,6 @@ class CoffeeNavigatorView extends View
 
     else if expression.value?.constructor.name == 'Value'
       element = @parseValue expression.value
-      console.log 'VAL', element
 
     element
 
