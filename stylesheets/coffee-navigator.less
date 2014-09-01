@@ -11,7 +11,7 @@
   overflow-y: scroll;
   overflow-x: hidden;
 
-  .icon {
+  .icon:before {
     display: inline-block;
     -webkit-font-smoothing: antialiased;
     text-decoration: none;
@@ -20,29 +20,29 @@
     vertical-align: text-top;
     height: 16px;
   }
+
+  .icon-class:before {
+    width: 16px;
+    content: "c";
+    border-radius: 8px;
+    background-color: @background-color-highlight;
+    line-height: 13px;
+    padding-left: 3px;
+  }
+
+  .icon-bound:before {
+    width: 24px;
+    content: "=>";
+    line-height: 16px;
+  }
+
+  .icon-unbound:before {
+    width: 24px;
+    content: "->";
+    line-height: 16px;
+  }
 }
 
 .has-navigator .editor-contents {
   width: 80% !important;
-}
-
-.icon-class:before {
-  width: 16px;
-  content: "c";
-  border-radius: 8px;
-  background-color: @background-color-highlight;
-  line-height: 13px;
-  padding-left: 3px;
-}
-
-.icon-bound:before {
-  width: 24px;
-  content: "=>";
-  line-height: 16px;
-}
-
-.icon-unbound:before {
-  width: 24px;
-  content: "->";
-  line-height: 16px;
 }
