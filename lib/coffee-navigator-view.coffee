@@ -66,7 +66,7 @@ class CoffeeNavigatorView extends View
       element = $$ ->
         @li class: 'list-nested-item', =>
           @div class: 'list-item', =>
-            @span class: 'icon ' + icon, value
+            @a class: 'icon ' + icon, "data-line": expression.locationData.first_line, "data-column": expression.locationData.first_column, value
       element.append @parseBlock(expression.value.body)
 
     else if expression.value?.constructor.name == 'Class'
@@ -96,6 +96,15 @@ class CoffeeNavigatorView extends View
     fs.readFile atom.workspace.getActiveEditor().getPath(), (err, code) =>
       nodes = coffee.nodes(code.toString())
       @tree.append @parseBlock(nodes)
+
+      @tree.find('a').on 'click', (el)->
+        line = $(@).attr 'data-line'
+        column = $(@).attr 'data-column'
+        atom.workspace.getActiveEditor().setCursorBufferPosition [line, column]
+
+  goToLine: (event, element) ->
+    console.log 'goToLine', event, element
+    # editor.setCursorBufferPosition [item.row-1, item.col-1]
 
   toggle: ->
     if !!atom.workspace.getActiveEditor()
