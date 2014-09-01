@@ -13,6 +13,9 @@ class CoffeeNavigatorView extends View
 
   initialize: (serializeState) ->
     atom.workspaceView.command "coffee-navigator:toggle", => @toggle()
+    @subscribe atom.workspaceView, 'pane-container:active-pane-item-changed', => @attachToCurrentEditor()
+
+    console.log = ->
 
   serialize: ->
 
@@ -102,10 +105,6 @@ class CoffeeNavigatorView extends View
         column = $(@).attr 'data-column'
         atom.workspace.getActiveEditor().setCursorBufferPosition [line, column]
 
-  goToLine: (event, element) ->
-    console.log 'goToLine', event, element
-    # editor.setCursorBufferPosition [item.row-1, item.col-1]
-
   toggle: ->
     if !!atom.workspace.getActiveEditor()
       activeEditor = @getActiveEditorView()[0]
@@ -114,6 +113,13 @@ class CoffeeNavigatorView extends View
         activeEditor.removeClass 'has-navigator'
         @detach()
       else
+        activeEditor.addClass 'has-navigator'
         activeEditor.append(this)
 
         @parseCurrentFile()
+
+  attachToCurrentEditor: ->
+    if @hasParent()
+      @.parent().removeClass 'has-navigator'
+      @detach()
+      @toggle()
