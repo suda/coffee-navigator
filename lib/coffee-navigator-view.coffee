@@ -4,6 +4,7 @@ $$ = require('atom').$$
 coffee = require 'coffee-script'
 coffeeNodes = require('coffee-script').nodes
 fs = require 'fs'
+_s = require 'underscore.string'
 
 module.exports =
 class CoffeeNavigatorView extends View
@@ -13,7 +14,10 @@ class CoffeeNavigatorView extends View
 
   initialize: (serializeState) ->
     atom.workspaceView.command "coffee-navigator:toggle", => @toggle()
-    @subscribe atom.workspaceView, 'pane-container:active-pane-item-changed', => @attachToCurrentEditor()
+    @subscribe atom.workspaceView, 'pane-container:active-pane-item-changed', => @show()
+
+    @visible = false
+    # TODO: Hook on file modification
 
     console.log = ->
 
@@ -106,20 +110,26 @@ class CoffeeNavigatorView extends View
         atom.workspace.getActiveEditor().setCursorBufferPosition [line, column]
 
   toggle: ->
-    if !!atom.workspace.getActiveEditor()
-      activeEditor = @getActiveEditorView()[0]
+    if @visible
+      @hide()
+    else
+      @show()
 
-      if @hasParent()
-        activeEditor.removeClass 'has-navigator'
-        @detach()
-      else
-        activeEditor.addClass 'has-navigator'
-        activeEditor.append(this)
+    @visible = !@visible
+
+  show: ->
+    if @hasParent()
+      @hide()
+
+    if !!atom.workspace.getActiveEditor()
+      activeEditorView = @getActiveEditorView()[0]
+      if _s.endsWith(atom.workspace.getActiveEditor().getPath(), '.coffee')
+        activeEditorView.addClass 'has-navigator'
+        activeEditorView.append(this)
 
         @parseCurrentFile()
 
-  attachToCurrentEditor: ->
+  hide: ->
     if @hasParent()
       @.parent().removeClass 'has-navigator'
       @detach()
-      @toggle()
