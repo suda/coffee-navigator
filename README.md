@@ -1,5 +1,13 @@
-# coffee-navigator package
+# Coffee Navigator
 
-A short description of your package.
+Code navigation panel for Coffee Script, alternative to `Symbols View: Toggle File Symbols`/`CMD+R`.
 
-![A screenshot of your spankin' package](https://f.cloud.github.com/assets/69169/2290250/c35d867a-a017-11e3-86be-cd7c5bf3ff9b.gif)
+# Usage
+
+* Use command palette and search for `Coffee Navigator: Toggle`
+
+or
+
+* `Ctrl-Alt-N`
+
+to toggle navigator.
