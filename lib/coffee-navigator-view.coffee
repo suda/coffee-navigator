@@ -121,15 +121,23 @@ class CoffeeNavigatorView extends View
     if @hasParent()
       @hide()
 
-    if !!atom.workspace.getActiveEditor()
+    activeEditor = atom.workspace.getActiveEditor()
+    if !!activeEditor
       activeEditorView = @getActiveEditorView()[0]
-      if _s.endsWith(atom.workspace.getActiveEditor().getPath(), '.coffee')
+      if _s.endsWith(activeEditor.getPath(), '.coffee')
         activeEditorView.addClass 'has-navigator'
         activeEditorView.append(this)
+
+        # contents-modified for "live" parsing
+        activeEditor.getBuffer().on 'saved', @onChange
 
         @parseCurrentFile()
 
   hide: ->
     if @hasParent()
       @.parent().removeClass 'has-navigator'
+      $(@.parent()).data('view').editor.getBuffer().off 'saved', @onChange
       @detach()
+
+  onChange: =>
+    @parseCurrentFile()
