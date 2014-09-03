@@ -7,7 +7,7 @@
   {
     'label': 'Packages'
     'submenu': [
-      'label': 'coffee-navigator'
+      'label': 'Coffee Navigator'
       'submenu': [
         { 'label': 'Toggle', 'command': 'coffee-navigator:toggle' }
       ]
