@@ -14,7 +14,9 @@ class CoffeeNavigatorView extends View
 
   initialize: (serializeState) ->
     atom.workspaceView.command "coffee-navigator:toggle", => @toggle()
-    @subscribe atom.workspaceView, 'pane-container:active-pane-item-changed', => @show()
+    @subscribe atom.workspaceView, 'pane-container:active-pane-item-changed', =>
+      if @visible
+        @show()
 
     @visible = false
     # TODO: Hook on file modification

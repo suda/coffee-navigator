@@ -1,3 +1,4 @@
-## 0.1.0 - First Release
-* Every feature added
-* Every bug fixed
+## 0.0.3
+* Fixed bug with showing navigator even if hidden
+
+## 0.0.2 - First Release
