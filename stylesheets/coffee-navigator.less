@@ -10,12 +10,20 @@
   margin-left: 80%;
   overflow-y: scroll;
   overflow-x: hidden;
+  font-size: @font-size;
+  font-family: @font-family;
+  opacity: 1;
+  background: #303030;
+  box-shadow: inset -3px 0 0 rgba(0,0,0, .05);
+  border: none;
+  border-left: 1px solid @pane-item-border-color;
+  padding-top: 0;
 
   .icon:before {
     display: inline-block;
     -webkit-font-smoothing: antialiased;
     text-decoration: none;
-    font-size: 16px;
+    font-size: 11px;
     font-weight: bold;
     vertical-align: text-top;
     height: 16px;
@@ -28,18 +36,19 @@
     background-color: @background-color-highlight;
     line-height: 13px;
     padding-left: 3px;
+    font-size: 16px;
   }
 
   .icon-bound:before {
-    width: 24px;
+    width: 16px;
     content: "=>";
-    line-height: 16px;
+    line-height: 11px;
   }
 
   .icon-unbound:before {
-    width: 24px;
+    width: 16px;
     content: "->";
-    line-height: 16px;
+    line-height: 11px;
   }
 }
 

@@ -103,13 +103,20 @@ class CoffeeNavigatorView extends View
     # TODO: Test if path is a file
     # TODO: Test for empty file
     fs.readFile atom.workspace.getActiveEditor().getPath(), (err, code) =>
-      nodes = coffee.nodes(code.toString())
-      @tree.append @parseBlock(nodes)
+      try
+        nodes = coffee.nodes(code.toString())
+        @tree.append @parseBlock(nodes)
 
-      @tree.find('a').on 'click', (el)->
-        line = $(@).attr 'data-line'
-        column = $(@).attr 'data-column'
-        atom.workspace.getActiveEditor().setCursorBufferPosition [line, column]
+        @tree.find('a').on 'click', (el)->
+          line = $(@).attr 'data-line'
+          column = $(@).attr 'data-column'
+          atom.workspace.getActiveEditor().setCursorBufferPosition [line, column]
+      catch
+        @tree.append $$ ->
+          @ul class: 'background-message', =>
+            @li 'Error'
+            @li 'parsing'
+            @li 'file'
 
   toggle: ->
     if @visible
