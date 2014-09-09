@@ -19,7 +19,7 @@
   border-left: 1px solid @pane-item-border-color;
   padding-top: 0;
 
-  .icon:before {
+  .icon-text {
     display: inline-block;
     -webkit-font-smoothing: antialiased;
     text-decoration: none;
@@ -31,6 +31,8 @@
   }
 
   .icon-class:before {
+    .icon-text();
+
     width: 16px;
     content: "c";
     border-radius: 8px;
@@ -42,6 +44,8 @@
   }
 
   .icon-bound:before {
+    .icon-text();
+
     width: 16px;
     content: "=>";
     line-height: 11px;
@@ -50,11 +54,17 @@
   }
 
   .icon-unbound:before {
+    .icon-text();
+
     width: 16px;
     content: "->";
     line-height: 11px;
     letter-spacing: -5px;
     font-size: 16px;
+  }
+
+  a.icon.text-error {
+    color: @text-color-error;
   }
 }
 

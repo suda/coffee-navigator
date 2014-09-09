@@ -119,18 +119,17 @@ class CoffeeNavigatorView extends View
       try
         nodes = coffee.nodes(code.toString())
         @tree.append @parseBlock(nodes)
-
-        @tree.find('a').on 'click', (el)->
-          line = $(@).attr 'data-line'
-          column = $(@).attr 'data-column'
-          atom.workspace.getActiveEditor().setCursorBufferPosition [line, column]
-      catch
-        # TODO: Style error
+      catch e
         @tree.append $$ ->
-          @ul class: 'background-message', =>
-            @li 'Error'
-            @li 'parsing'
-            @li 'file'
+          @ul class: 'list-tree', =>
+            @li class: 'list-nested-item', =>
+              @div class: 'list-item', =>
+                @a class: 'icon icon-issue-opened text-error', "data-line": e.location.first_line, "data-column": e.location.first_column, e.message
+
+      @tree.find('a').on 'click', (el)->
+        line = $(@).attr 'data-line'
+        column = $(@).attr 'data-column'
+        atom.workspace.getActiveEditor().setCursorBufferPosition [line, column]
 
   toggle: ->
     if @visible
