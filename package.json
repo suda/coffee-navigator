@@ -1,7 +1,7 @@
 {
   "name": "coffee-navigator",
   "main": "./lib/coffee-navigator",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Code navigation panel for Coffee Script",
   "activationEvents": [
     "coffee-navigator:toggle"
