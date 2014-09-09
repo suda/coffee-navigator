@@ -20,14 +20,16 @@ class CoffeeNavigatorView extends View
         @show()
 
     @visible = false
-    # TODO: Hook on file modification
-
-    # console.log = ->
+    @debug = false
 
   serialize: ->
 
   destroy: ->
     @detach()
+
+  log: ->
+    if @debug
+      console.log arguments
 
   getActiveEditorView: ->
     deferred = Q.defer()
@@ -44,7 +46,7 @@ class CoffeeNavigatorView extends View
     deferred.promise
 
   parseBlock: (block) ->
-    console.log 'Block', block
+    @log 'Block', block
     element = $('<div>')
     for expression in block.expressions
       result = null
@@ -57,7 +59,7 @@ class CoffeeNavigatorView extends View
     element.find('>')
 
   parseValue: (expression) ->
-    console.log 'Value', expression
+    @log 'Value', expression
     switch expression.base.constructor.name
       when 'Literal'
         value = expression.base.value
@@ -75,7 +77,7 @@ class CoffeeNavigatorView extends View
         return element.find('>')
 
   parseAssign: (expression) ->
-    console.log 'Assign', expression
+    @log 'Assign', expression
     element = null
     if expression.value?.constructor.name == 'Code'
       value = @parseValue(expression.variable)
@@ -112,8 +114,7 @@ class CoffeeNavigatorView extends View
 
   parseCurrentFile: ->
     @tree.empty()
-    # TODO: Test if path is a file
-    # TODO: Test for empty file
+
     fs.readFile atom.workspace.getActiveEditor().getPath(), (err, code) =>
       try
         nodes = coffee.nodes(code.toString())
@@ -124,6 +125,7 @@ class CoffeeNavigatorView extends View
           column = $(@).attr 'data-column'
           atom.workspace.getActiveEditor().setCursorBufferPosition [line, column]
       catch
+        # TODO: Style error
         @tree.append $$ ->
           @ul class: 'background-message', =>
             @li 'Error'
@@ -147,7 +149,6 @@ class CoffeeNavigatorView extends View
       if _s.endsWith(activeEditor.getPath(), '.coffee')
         promise = @getActiveEditorView()
         promise.then (activeEditorView) =>
-          console.log "THEN!", activeEditorView, activeEditor
           activeEditorView.addClass 'has-navigator'
           activeEditorView.append(this)
 
