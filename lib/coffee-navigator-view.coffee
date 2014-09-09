@@ -5,6 +5,7 @@ coffee = require 'coffee-script'
 coffeeNodes = require('coffee-script').nodes
 fs = require 'fs'
 _s = require 'underscore.string'
+Q = require 'q'
 
 module.exports =
 class CoffeeNavigatorView extends View
@@ -13,7 +14,7 @@ class CoffeeNavigatorView extends View
       @ul class: 'list-tree', outlet: 'tree'
 
   initialize: (serializeState) ->
-    atom.workspaceView.command "coffee-navigator:toggle", => @toggle()
+    atom.workspaceView.command 'coffee-navigator:toggle', => @toggle()
     @subscribe atom.workspaceView, 'pane-container:active-pane-item-changed', =>
       if @visible
         @show()
@@ -21,7 +22,7 @@ class CoffeeNavigatorView extends View
     @visible = false
     # TODO: Hook on file modification
 
-    console.log = ->
+    # console.log = ->
 
   serialize: ->
 
@@ -29,7 +30,18 @@ class CoffeeNavigatorView extends View
     @detach()
 
   getActiveEditorView: ->
-    editorView for editorView in atom.workspaceView.getEditorViews() when editorView.getEditor() == atom.workspace.getActiveEditor()
+    deferred = Q.defer()
+
+    # There's slight delay between 'pane-container:active-pane-item-changed'
+    # command and creating am EditorView for new pane
+    interval = setInterval =>
+      for editorView in atom.workspaceView.getEditorViews()
+        if editorView.getEditor() == atom.workspace.getActiveEditor()
+          deferred.resolve(editorView)
+          clearInterval interval
+    , 10
+
+    deferred.promise
 
   parseBlock: (block) ->
     console.log 'Block', block
@@ -132,15 +144,17 @@ class CoffeeNavigatorView extends View
 
     activeEditor = atom.workspace.getActiveEditor()
     if !!activeEditor
-      activeEditorView = @getActiveEditorView()[0]
       if _s.endsWith(activeEditor.getPath(), '.coffee')
-        activeEditorView.addClass 'has-navigator'
-        activeEditorView.append(this)
+        promise = @getActiveEditorView()
+        promise.then (activeEditorView) =>
+          console.log "THEN!", activeEditorView, activeEditor
+          activeEditorView.addClass 'has-navigator'
+          activeEditorView.append(this)
 
-        # contents-modified for "live" parsing
-        activeEditor.getBuffer().on 'saved', @onChange
+          # contents-modified for "live" parsing
+          activeEditor.getBuffer().on 'saved', @onChange
 
-        @parseCurrentFile()
+          @parseCurrentFile()
 
   hide: ->
     if @hasParent()

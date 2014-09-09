@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "coffee-script": "*",
-    "underscore.string": "*"
+    "underscore.string": "*",
+    "q": "^1.0.1"
   }
 }
