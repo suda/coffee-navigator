@@ -1,11 +1,11 @@
 {View} = require 'atom'
-$ = require('atom').$
-$$ = require('atom').$$
-coffee = require 'coffee-script'
-coffeeNodes = require('coffee-script').nodes
-fs = require 'fs'
-_s = require 'underscore.string'
-Q = require 'q'
+$ = null
+$$ = null
+coffee = null
+coffeeNodes = null
+fs = null
+_s = null
+Q = null
 
 module.exports =
 class CoffeeNavigatorView extends View
@@ -18,8 +18,10 @@ class CoffeeNavigatorView extends View
     @subscribe atom.workspaceView, 'pane-container:active-pane-item-changed', =>
       if @visible
         @show()
+    @visible = localStorage.getItem('coffeeNavigatorStatus') == 'true'
+    if @visible
+      @show()
 
-    @visible = false
     @debug = false
 
   serialize: ->
@@ -32,6 +34,8 @@ class CoffeeNavigatorView extends View
       console.log arguments
 
   getActiveEditorView: ->
+    Q ?= require 'q'
+
     deferred = Q.defer()
 
     # There's slight delay between 'pane-container:active-pane-item-changed'
@@ -113,6 +117,12 @@ class CoffeeNavigatorView extends View
     element
 
   parseCurrentFile: ->
+    $ ?= require('atom').$
+    $$ ?= require('atom').$$
+    coffee ?= require 'coffee-script'
+    coffeeNodes ?= require('coffee-script').nodes
+    fs ?= require 'fs'
+
     @tree.empty()
 
     fs.readFile atom.workspace.getActiveEditor().getPath(), (err, code) =>
@@ -142,6 +152,7 @@ class CoffeeNavigatorView extends View
       @show()
 
     @visible = !@visible
+    localStorage.setItem 'coffeeNavigatorStatus', @visible
 
   show: ->
     if @hasParent()
@@ -149,6 +160,7 @@ class CoffeeNavigatorView extends View
 
     activeEditor = atom.workspace.getActiveEditor()
     if !!activeEditor
+      _s ?= require 'underscore.string'
       if _s.endsWith(activeEditor.getPath(), '.coffee')
         promise = @getActiveEditorView()
         promise.then (activeEditorView) =>

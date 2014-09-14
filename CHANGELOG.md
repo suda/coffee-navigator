@@ -1,3 +1,6 @@
+## 0.0.6
+* Saving state to localStorage
+
 ## 0.0.5
 * Smart scroll
 
