@@ -126,10 +126,14 @@ class CoffeeNavigatorView extends View
               @div class: 'list-item', =>
                 @a class: 'icon icon-issue-opened text-error', "data-line": e.location.first_line, "data-column": e.location.first_column, e.message
 
-      @tree.find('a').on 'click', (el)->
-        line = $(@).attr 'data-line'
-        column = $(@).attr 'data-column'
-        atom.workspace.getActiveEditor().setCursorBufferPosition [line, column]
+      @tree.find('a').on 'click', (el) ->
+        line = parseInt($(@).attr 'data-line')
+        column = parseInt($(@).attr 'data-column')
+        editor = atom.workspace.getActiveEditor()
+
+        editor.setCursorBufferPosition [line, column]
+        firstRow = editor.getFirstVisibleScreenRow()
+        editor.scrollToBufferPosition [line + (line - firstRow) - 1, column]
 
   toggle: ->
     if @visible

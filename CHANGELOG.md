@@ -1,3 +1,6 @@
+## 0.0.5
+* Smart scroll
+
 ## 0.0.4
 * Fixed colors in light theme
 
