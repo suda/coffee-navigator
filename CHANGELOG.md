@@ -1,3 +1,6 @@
+## 0.0.4
+* Fixed colors in light theme
+
 ## 0.0.3
 * Fixed bug with showing navigator even if hidden
 * Catching parsing errors
