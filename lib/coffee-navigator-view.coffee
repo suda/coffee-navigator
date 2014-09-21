@@ -79,10 +79,15 @@ class CoffeeNavigatorView extends View
     element = null
     if expression.value?.constructor.name == 'Code'
       value = @parseValue(expression.variable)
+
       if expression.value.bound
         icon = 'icon-bound'
       else
         icon = 'icon-unbound'
+
+      if _s.startsWith(value, 'this.')
+        value = value.slice(5)
+        icon += '-static'
 
       element = $$ ->
         @li class: 'list-nested-item', =>

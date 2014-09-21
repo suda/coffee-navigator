@@ -1,3 +1,6 @@
+## 0.0.8
+* Support for static methods
+
 ## 0.0.7
 * New icons by PEM--
 

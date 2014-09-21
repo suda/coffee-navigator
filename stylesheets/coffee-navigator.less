@@ -38,47 +38,37 @@
     height: 16px;
   }
 
-  .icon-class:before {
+  .icon-base {
     .icon-text();
 
     font-family: 'classmethod';
     width: 16px;
-    content: "\30";
     line-height: 13px;
     font-size: 16px;
   }
 
-  .icon-static:before {
-    .icon-text();
+  .icon-class:before {
+    .icon-base();
 
-    width: 16px;
-    content: "s";
-    border-radius: 8px;
-    background-color: @background-color-highlight;
-    line-height: 13px;
-    padding-left: 3px;
-    font-size: 16px;
-    margin-top: -2px;
+    content: "\30";
   }
 
   .icon-bound:before {
-    .icon-text();
+    .icon-base();
 
-    width: 16px;
-    font-family: 'classmethod';
     content: "\61";
-    line-height: 13px;
-    font-size: 16px;
   }
 
   .icon-unbound:before {
-    .icon-text();
+    .icon-base();
 
-    width: 16px;
-    font-family: 'classmethod';
     content: "\41";
-    line-height: 13px;
-    font-size: 16px;
+  }
+
+  .icon-unbound-static:before {
+    .icon-base();
+
+    content: "\43";
   }
 
   a.icon.text-error {
