@@ -16,7 +16,7 @@ class CoffeeNavigatorView extends View
     if @visible
       @show()
 
-    @debug = false
+    @debug = !false
 
   serialize: ->
 
@@ -158,6 +158,7 @@ class CoffeeNavigatorView extends View
     if @hasParent()
       @hide()
 
+    fs ?= require 'fs'
     activeEditor = atom.workspace.getActiveEditor()
     if (!!activeEditor) && (fs.existsSync(activeEditor.getPath()))
       _s ?= require 'underscore.string'
