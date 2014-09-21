@@ -4,7 +4,8 @@ module.exports =
   coffeeNavigatorView: null
 
   activate: (state) ->
-    @coffeeNavigatorView = new CoffeeNavigatorView(state.coffeeNavigatorViewState)
+    @coffeeNavigatorView = new CoffeeNavigatorView \
+      state.coffeeNavigatorViewState
 
   deactivate: ->
     @coffeeNavigatorView.destroy()

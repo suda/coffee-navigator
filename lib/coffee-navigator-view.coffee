@@ -1,11 +1,5 @@
 {View} = require 'atom'
-$ = null
-$$ = null
-coffee = null
-coffeeNodes = null
-fs = null
-_s = null
-Q = null
+$ = $$ = coffee = coffeeNodes = fs = _s = Q = null
 
 module.exports =
 class CoffeeNavigatorView extends View
@@ -40,7 +34,7 @@ class CoffeeNavigatorView extends View
 
     # There's slight delay between 'pane-container:active-pane-item-changed'
     # command and creating am EditorView for new pane
-    interval = setInterval =>
+    interval = setInterval ->
       for editorView in atom.workspaceView.getEditorViews()
         if editorView.getEditor() == atom.workspace.getActiveEditor()
           deferred.resolve(editorView)
@@ -93,7 +87,10 @@ class CoffeeNavigatorView extends View
       element = $$ ->
         @li class: 'list-nested-item', =>
           @div class: 'list-item', =>
-            @a class: 'icon ' + icon, "data-line": expression.locationData.first_line, "data-column": expression.locationData.first_column, value
+            @a
+              class: 'icon ' + icon
+              'data-line': expression.locationData.first_line
+              'data-column': expression.locationData.first_column, value
       element.append @parseBlock(expression.value.body)
 
     else if expression.value?.constructor.name == 'Class'
@@ -134,7 +131,10 @@ class CoffeeNavigatorView extends View
           @ul class: 'list-tree', =>
             @li class: 'list-nested-item', =>
               @div class: 'list-item', =>
-                @a class: 'icon icon-issue-opened text-error', "data-line": e.location.first_line, "data-column": e.location.first_column, e.message
+                @a
+                  class: 'icon icon-issue-opened text-error'
+                  "data-line": e.location.first_line
+                  "data-column": e.location.first_column, e.message
 
       @tree.find('a').on 'click', (el) ->
         line = parseInt($(@).attr 'data-line')
