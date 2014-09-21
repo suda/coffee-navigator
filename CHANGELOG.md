@@ -1,3 +1,6 @@
+## 0.0.7
+* New icons by PEM--
+
 ## 0.0.6
 * Saving state to localStorage
 
