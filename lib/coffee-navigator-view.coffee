@@ -16,7 +16,7 @@ class CoffeeNavigatorView extends View
     if @visible
       @show()
 
-    @debug = !false
+    @debug = false
 
   serialize: ->
 
