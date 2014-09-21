@@ -159,7 +159,7 @@ class CoffeeNavigatorView extends View
       @hide()
 
     activeEditor = atom.workspace.getActiveEditor()
-    if !!activeEditor
+    if (!!activeEditor) && (fs.existsSync(activeEditor.getPath()))
       _s ?= require 'underscore.string'
       if _s.endsWith(activeEditor.getPath(), '.coffee')
         promise = @getActiveEditorView()
