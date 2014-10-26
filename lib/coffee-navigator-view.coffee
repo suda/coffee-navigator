@@ -94,8 +94,8 @@ class CoffeeNavigatorView extends View
           @div class: 'list-item', =>
             @a
               class: 'icon ' + icon
-              'data-line': expression.locationData.first_line
-              'data-column': expression.locationData.first_column, value
+              'data-line': expression.locationData?.first_line
+              'data-column': expression.locationData?.first_column, value
       element.append @parseBlock(expression.value.body)
 
     else if expression.value?.constructor.name == 'Class'
@@ -138,8 +138,8 @@ class CoffeeNavigatorView extends View
               @div class: 'list-item', =>
                 @a
                   class: 'icon icon-issue-opened text-error'
-                  "data-line": e.location.first_line
-                  "data-column": e.location.first_column, e.message
+                  "data-line": e.location?.first_line
+                  "data-column": e.location?.first_column, e.message
 
       @tree.find('a').on 'click', (el) ->
         line = parseInt($(@).attr 'data-line')
