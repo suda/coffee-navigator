@@ -1,5 +1,11 @@
+## 0.0.11
+* Fixed issue with switching panes
+
+## 0.0.10
+* Switched to ctags for parsing
+
 ## 0.0.9
-* switched to ctags for parsing
+* Bug fixes
 
 ## 0.0.8
 * Support for static methods

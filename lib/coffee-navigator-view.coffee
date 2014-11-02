@@ -10,7 +10,7 @@ class CoffeeNavigatorView extends View
 
   initialize: (serializeState) ->
     atom.workspaceView.command 'coffee-navigator:toggle', => @toggle()
-    @subscribe atom.workspaceView, 'pane-container:active-pane-item-changed', =>
+    atom.workspace.onDidChangeActivePaneItem =>
       if @visible
         @show()
     @visible = localStorage.getItem('coffeeNavigatorStatus') == 'true'

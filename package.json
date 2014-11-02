@@ -5,9 +5,6 @@
   "description": "Code navigation panel for Coffee Script",
   "repository": "https://github.com/suda/coffee-navigator",
   "license": "MIT",
-  "activationEvents": [
-    "coffee-navigator:toggle"
-  ],
   "engines": {
     "atom": ">0.50.0"
   },
