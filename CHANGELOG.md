@@ -1,3 +1,6 @@
+## 0.0.9
+* switched to ctags for parsing
+
 ## 0.0.8
 * Support for static methods
 
