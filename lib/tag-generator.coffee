@@ -10,9 +10,9 @@ class TagGenerator
     sections = line.split('\t')
 
     if sections.length > 4
-      column = sections[2].match(/^\/\^(\s*)[\w]/)[1].length
+      column = sections[2].match(/^\/\^(\s*)[\S]/)[1].length
       return {
-        position: new Point(column, parseInt(sections[4]))
+        position: new Point(parseInt(sections[4].split(':')[1]) - 1, column)
         name: sections[0]
         kind: sections[3]
         identation: column
@@ -56,7 +56,6 @@ class TagGenerator
     args.push('-Nuf', '-', @path)
 
     stdout = (lines) =>
-      console.log lines
       for line in lines.split('\n')
         tag = @parseTagLine(line)
         tags.push(tag) if tag

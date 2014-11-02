@@ -6,3 +6,6 @@ class Outer
 module.exports = ->
   class ClassInFunction
     z: -> undefined
+  class SecondClassInFunction
+    a: -> undefined
+    b: -> undefined

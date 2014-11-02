@@ -1,12 +1,12 @@
 {View} = require 'atom'
-$ = $$ = = fs = _s = Q = null
+$ = $$ = fs = _s = Q = null
 TagGenerator = require './tag-generator'
 
 module.exports =
 class CoffeeNavigatorView extends View
   @content: ->
     @div id: 'coffee-navigator', class: 'tool-panel panel-bottom padded', =>
-      @ul class: 'list-tree', outlet: 'tree'
+      @div outlet: 'tree'
 
   initialize: (serializeState) ->
     atom.workspaceView.command 'coffee-navigator:toggle', => @toggle()
@@ -54,7 +54,41 @@ class CoffeeNavigatorView extends View
     @tree.empty()
 
     new TagGenerator(@getPath(), @getScopeName()).generate().done (tags) =>
-      # TODO: Add tags
+      lastIdentation = -1
+      for tag in tags
+        if tag.identation > lastIdentation
+          root = if @tree.find('li:last').length then @tree.find('li:last') else @tree
+          root.append $$ ->
+            @ul class: 'list-tree'
+          root = root.find('ul:last')
+        else if tag.identation == lastIdentation
+          root = @tree.find('li:last')
+        else
+          root = @tree.find('li[data-identation='+tag.identation+']:last').parent()
+
+        icon = ''
+        switch tag.kind
+          when 'function' then icon = 'icon-unbound'
+          when 'function-bind' then icon = 'icon-bound'
+          when 'class' then icon = 'icon-class'
+
+        if _s.startsWith(tag.name, '@')
+          tag.name = tag.name.slice(1)
+          if tag.kind == 'function'
+            icon += '-static'
+        else if tag.name == 'module.exports'
+          icon = 'icon-package'
+
+        root.append $$ ->
+            @li class: 'list-nested-item', 'data-identation': tag.identation, =>
+              @div class: 'list-item', =>
+                @a
+                  class: 'icon ' + icon
+                  "data-line": tag.position.row
+                  "data-column": tag.position.column, tag.name
+
+        lastIdentation = tag.identation
+
 
       @tree.find('a').on 'click', (el) ->
         line = parseInt($(@).attr 'data-line')
