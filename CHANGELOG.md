@@ -1,3 +1,6 @@
+## 0.0.12
+* Fixed issue with class names
+
 ## 0.0.11
 * Fixed issue with switching panes
 

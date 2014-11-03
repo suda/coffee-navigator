@@ -16,7 +16,7 @@
 --regex-CoffeeScript=/^[ \t]*xdescribe[ \t]'(.+)'[ \t]*,[ \t]+[-=]>/disabled: \1/f,function/
 --regex-CoffeeScript=/^[ \t]*xit[ \t]"([^"]+)"[ \t]*,[ \t]+[-=]>/disabled: \1/f,function/
 --regex-CoffeeScript=/^[ \t]*xit[ \t]'([^']+)'[ \t]*,[ \t]+[-=]>/disabled: \1/f,function/
---regex-CoffeeScript=/^[ \t]*class[ \t]*([a-zA-Z$_\.0-9]+)[ \t]*/\1/f,class/
+--regex-CoffeeScript=/^[ \t]*class[ \t]+([a-zA-Z$_\.0-9]+)[ \t]*/\1/f,class/
 
 --langdef=Css
 --langmap=Css:.css
