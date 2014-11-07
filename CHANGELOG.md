@@ -1,3 +1,6 @@
+## 0.0.13
+* Fixed errors with latest Atom
+
 ## 0.0.12
 * Fixed issue with class names
 

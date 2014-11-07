@@ -130,7 +130,7 @@ class CoffeeNavigatorView extends View
   hide: ->
     if @hasParent()
       @.parent().removeClass 'has-navigator'
-      $(@.parent()).data('view').editor.getBuffer().off 'saved', @onChange
+      @.parent()[0].getModel().getBuffer().off 'saved', @onChange
       @detach()
 
   onChange: =>
