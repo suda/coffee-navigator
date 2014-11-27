@@ -49,6 +49,7 @@ class CoffeeNavigatorView extends View
     deferred.promise
 
   parseCurrentFile: ->
+    scrollTop = @.scrollTop()
     $ ?= require('atom').$
     $$ ?= require('atom').$$
     @tree.empty()
@@ -88,6 +89,8 @@ class CoffeeNavigatorView extends View
                   "data-column": tag.position.column, tag.name
 
         lastIdentation = tag.identation
+
+      @.scrollTop(scrollTop)
 
 
       @tree.find('a').on 'click', (el) ->
