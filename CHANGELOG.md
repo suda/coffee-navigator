@@ -1,3 +1,6 @@
+## 0.0.14
+* Fixed issue with scroll
+
 ## 0.0.13
 * Fixed errors with latest Atom
 
