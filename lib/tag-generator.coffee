@@ -25,7 +25,7 @@ class TagGenerator
 
     switch @scopeName
       when 'source.c'        then 'C'
-      when 'source.c++'      then 'C++'
+      when 'source.cpp'      then 'C++'
       when 'source.clojure'  then 'Lisp'
       when 'source.coffee'   then 'CoffeeScript'
       when 'source.css'      then 'Css'
@@ -38,13 +38,17 @@ class TagGenerator
       when 'source.json'     then 'Json'
       when 'source.makefile' then 'Make'
       when 'source.objc'     then 'C'
-      when 'source.objc++'   then 'C++'
+      when 'source.objcpp'   then 'C++'
       when 'source.python'   then 'Python'
       when 'source.ruby'     then 'Ruby'
       when 'source.sass'     then 'Sass'
       when 'source.yaml'     then 'Yaml'
       when 'text.html'       then 'Html'
       when 'text.html.php'   then 'Php'
+
+      # For backward-compatibility with Atom versions < 0.166
+      when 'source.c++'      then 'C++'
+      when 'source.objc++'   then 'C++'
 
   generate: ->
     deferred = Q.defer()
