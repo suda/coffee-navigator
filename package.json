@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "underscore.string": "*",
-    "q": "^1.0.1"
+    "q": "^1.0.1",
+    "underscore-plus": "^1.0.0"
   }
 }

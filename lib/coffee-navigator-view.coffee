@@ -1,15 +1,15 @@
-{View} = require 'atom'
-$ = $$ = fs = _s = Q = null
+$ = $$ = fs = _s = Q = _ = null
+ResizableView = require './resizable-view'
 TagGenerator = require './tag-generator'
 
 module.exports =
-class CoffeeNavigatorView extends View
-  @content: ->
-    @div id: 'coffee-navigator', class: 'tool-panel panel-bottom padded', =>
+class CoffeeNavigatorView extends ResizableView
+  @innerContent: ->
+    @div id: 'coffee-navigator', class: 'padded', =>
       @div outlet: 'tree'
 
   initialize: (serializeState) ->
-    atom.workspaceView.command 'coffee-navigator:toggle', => @toggle()
+    atom.commands.add 'atom-workspace', 'coffee-navigator:toggle', => @toggle()
     atom.workspace.onDidChangeActivePaneItem =>
       if @visible
         @show()
@@ -24,9 +24,40 @@ class CoffeeNavigatorView extends View
   destroy: ->
     @detach()
 
-  getPath: -> atom.workspace.getActiveEditor()?.getPath()
+  toggle: ->
+    if @isVisible()
+      @detach()
+    else
+      @show()
 
-  getScopeName: -> atom.workspace.getActiveEditor()?.getGrammar()?.scopeName
+    localStorage.setItem 'coffeeNavigatorStatus', @isVisible()
+
+  show: ->
+    @attach()
+    @parseCurrentFile()
+    @focus()
+
+  attach: ->
+    _ ?= require 'underscore-plus'
+    return if _.isEmpty(atom.project.getPaths())
+
+    @panel ?=
+      if atom.config.get('coffee-navigator.showOnRightSide')
+        atom.workspace.addRightPanel(item: this)
+      else
+        atom.workspace.addLeftPanel(item: this)
+
+  detach: ->
+    @panel.destroy()
+    @panel = null
+
+  getPath: ->
+    # Get path for currently edited file
+    atom.workspace.getActiveEditor()?.getPath()
+
+  getScopeName: ->
+    # Get grammar scope name
+    atom.workspace.getActiveEditor()?.getGrammar()?.scopeName
 
   log: ->
     if @debug
@@ -36,22 +67,19 @@ class CoffeeNavigatorView extends View
     Q ?= require 'q'
 
     deferred = Q.defer()
-
-    # There's slight delay between 'pane-container:active-pane-item-changed'
-    # command and creating am EditorView for new pane
     interval = setInterval ->
-      for editorView in atom.workspaceView.getEditorViews()
-        if editorView.getEditor() == atom.workspace.getActiveEditor()
-          deferred.resolve(editorView)
-          clearInterval interval
+      deferred.resolve atom.views.getView(atom.workspace.getActiveTextEditor()).shadowRoot.querySelector('.editor-contents--private')
+      clearInterval interval
     , 10
 
     deferred.promise
 
   parseCurrentFile: ->
-    scrollTop = @.scrollTop()
+    _s ?= require 'underscore.string'
     $ ?= require('atom').$
     $$ ?= require('atom').$$
+
+    scrollTop = @.scrollTop()
     @tree.empty()
 
     new TagGenerator(@getPath(), @getScopeName()).generate().done (tags) =>
@@ -102,7 +130,7 @@ class CoffeeNavigatorView extends View
         firstRow = editor.getFirstVisibleScreenRow()
         editor.scrollToBufferPosition [line + (line - firstRow) - 1, column]
 
-  toggle: ->
+  _toggle: ->
     if @visible
       @hide()
     else
@@ -111,26 +139,29 @@ class CoffeeNavigatorView extends View
     @visible = !@visible
     localStorage.setItem 'coffeeNavigatorStatus', @visible
 
-  show: ->
-    if @hasParent()
-      @hide()
-
+  renderCurrentFile: ->
     fs ?= require 'fs'
+
     activeEditor = atom.workspace.getActiveEditor()
     if (!!activeEditor) && (fs.existsSync(activeEditor.getPath()))
       _s ?= require 'underscore.string'
       if _s.endsWith(activeEditor.getPath(), '.coffee')
         promise = @getActiveEditorView()
         promise.then (activeEditorView) =>
-          activeEditorView.addClass 'has-navigator'
-          activeEditorView.append(this)
+
+          activeEditorView.className += ' has-navigator'
+          div = document.createElement 'div'
+          div.innerHTML = @.html()
+          activeEditorView.appendChild @
+
+          console.log('getActiveEditorView', activeEditorView);
 
           # contents-modified for "live" parsing
           activeEditor.getBuffer().on 'saved', @onChange
 
-          @parseCurrentFile()
 
-  hide: ->
+
+  _hide: ->
     if @hasParent()
       @.parent().removeClass 'has-navigator'
       @.parent()[0].getModel().getBuffer().off 'saved', @onChange

@@ -1,6 +1,11 @@
 CoffeeNavigatorView = require './coffee-navigator-view'
 
 module.exports =
+  config:
+    showOnRightSide:
+      type: 'boolean'
+      default: true
+
   coffeeNavigatorView: null
 
   activate: (state) ->
