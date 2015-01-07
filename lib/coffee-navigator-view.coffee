@@ -9,6 +9,12 @@ class CoffeeNavigatorView extends ResizableView
       @div outlet: 'tree'
 
   initialize: (serializeState) ->
+    super serializeState
+
+    @showOnRightSide = atom.config.get('coffee-navigator.showOnRightSide')
+    atom.config.onDidChange 'coffee-navigator.showOnRightSide', ({newValue}) =>
+      @onSideToggled(newValue)
+
     atom.commands.add 'atom-workspace', 'coffee-navigator:toggle', => @toggle()
     atom.workspace.onDidChangeActivePaneItem =>
       if @visible
@@ -42,7 +48,7 @@ class CoffeeNavigatorView extends ResizableView
     return if _.isEmpty(atom.project.getPaths())
 
     @panel ?=
-      if atom.config.get('coffee-navigator.showOnRightSide')
+      if @showOnRightSide
         atom.workspace.addRightPanel(item: this)
       else
         atom.workspace.addLeftPanel(item: this)
@@ -50,6 +56,13 @@ class CoffeeNavigatorView extends ResizableView
   detach: ->
     @panel.destroy()
     @panel = null
+
+  onSideToggled: (newValue) ->
+    @closest('.view-resizer')[0].dataset.showOnRightSide = newValue
+    @showOnRightSide = newValue
+    if @isVisible()
+      @detach()
+      @attach()
 
   getPath: ->
     # Get path for currently edited file
@@ -62,17 +75,6 @@ class CoffeeNavigatorView extends ResizableView
   log: ->
     if @debug
       console.log arguments
-
-  getActiveEditorView: ->
-    Q ?= require 'q'
-
-    deferred = Q.defer()
-    interval = setInterval ->
-      deferred.resolve atom.views.getView(atom.workspace.getActiveTextEditor()).shadowRoot.querySelector('.editor-contents--private')
-      clearInterval interval
-    , 10
-
-    deferred.promise
 
   parseCurrentFile: ->
     _s ?= require 'underscore.string'
@@ -130,14 +132,6 @@ class CoffeeNavigatorView extends ResizableView
         firstRow = editor.getFirstVisibleScreenRow()
         editor.scrollToBufferPosition [line + (line - firstRow) - 1, column]
 
-  _toggle: ->
-    if @visible
-      @hide()
-    else
-      @show()
-
-    @visible = !@visible
-    localStorage.setItem 'coffeeNavigatorStatus', @visible
 
   renderCurrentFile: ->
     fs ?= require 'fs'
