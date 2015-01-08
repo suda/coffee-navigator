@@ -16,19 +16,24 @@ class CoffeeNavigatorView extends ResizableView
       @onSideToggled(newValue)
 
     atom.commands.add 'atom-workspace', 'coffee-navigator:toggle', => @toggle()
-    atom.workspace.onDidChangeActivePaneItem =>
-      if @visible
-        @show()
+    atom.workspace.onDidChangeActivePaneItem (item) =>
+      @onActivePaneChange(item)
+
     @visible = localStorage.getItem('coffeeNavigatorStatus') == 'true'
     if @visible
       @show()
 
+    @onActivePaneChange(atom.workspace.getActiveTextEditor())
+
     @debug = false
+
+    @fileWatcher = null
 
   serialize: ->
 
   destroy: ->
     @detach()
+    @fileWatcher?.dispose()
 
   toggle: ->
     if @isVisible()
@@ -40,7 +45,6 @@ class CoffeeNavigatorView extends ResizableView
 
   show: ->
     @attach()
-    @parseCurrentFile()
     @focus()
 
   attach: ->
@@ -64,6 +68,13 @@ class CoffeeNavigatorView extends ResizableView
       @detach()
       @attach()
 
+  onActivePaneChange: (item) ->
+    if @isVisible()
+      @parseCurrentFile()
+      @fileWatcher?.dispose()
+      @fileWatcher = item?.onDidSave? =>
+        @parseCurrentFile()
+
   getPath: ->
     # Get path for currently edited file
     atom.workspace.getActiveEditor()?.getPath()
@@ -80,86 +91,59 @@ class CoffeeNavigatorView extends ResizableView
     _s ?= require 'underscore.string'
     $ ?= require('atom').$
     $$ ?= require('atom').$$
+    fs ?= require 'fs'
 
     scrollTop = @.scrollTop()
     @tree.empty()
 
-    new TagGenerator(@getPath(), @getScopeName()).generate().done (tags) =>
-      lastIdentation = -1
-      for tag in tags
-        if tag.identation > lastIdentation
-          root = if @tree.find('li:last').length then @tree.find('li:last') else @tree
+    if _s.endsWith(@getPath(), '.coffee')
+      new TagGenerator(@getPath(), @getScopeName()).generate().done (tags) =>
+        lastIdentation = -1
+        for tag in tags
+          if tag.identation > lastIdentation
+            root = if @tree.find('li:last').length then @tree.find('li:last') else @tree
+            root.append $$ ->
+              @ul class: 'list-tree'
+            root = root.find('ul:last')
+          else if tag.identation == lastIdentation
+            root = @tree.find('li:last')
+          else
+            root = @tree.find('li[data-identation='+tag.identation+']:last').parent()
+
+          icon = ''
+          switch tag.kind
+            when 'function' then icon = 'icon-unbound'
+            when 'function-bind' then icon = 'icon-bound'
+            when 'class' then icon = 'icon-class'
+
+          if _s.startsWith(tag.name, '@')
+            tag.name = tag.name.slice(1)
+            if tag.kind == 'function'
+              icon += '-static'
+          else if tag.name == 'module.exports'
+            icon = 'icon-package'
+
           root.append $$ ->
-            @ul class: 'list-tree'
-          root = root.find('ul:last')
-        else if tag.identation == lastIdentation
-          root = @tree.find('li:last')
-        else
-          root = @tree.find('li[data-identation='+tag.identation+']:last').parent()
+              @li class: 'list-nested-item', 'data-identation': tag.identation, =>
+                @div class: 'list-item', =>
+                  @a
+                    class: 'icon ' + icon
+                    "data-line": tag.position.row
+                    "data-column": tag.position.column, tag.name
 
-        icon = ''
-        switch tag.kind
-          when 'function' then icon = 'icon-unbound'
-          when 'function-bind' then icon = 'icon-bound'
-          when 'class' then icon = 'icon-class'
+          lastIdentation = tag.identation
 
-        if _s.startsWith(tag.name, '@')
-          tag.name = tag.name.slice(1)
-          if tag.kind == 'function'
-            icon += '-static'
-        else if tag.name == 'module.exports'
-          icon = 'icon-package'
-
-        root.append $$ ->
-            @li class: 'list-nested-item', 'data-identation': tag.identation, =>
-              @div class: 'list-item', =>
-                @a
-                  class: 'icon ' + icon
-                  "data-line": tag.position.row
-                  "data-column": tag.position.column, tag.name
-
-        lastIdentation = tag.identation
-
-      @.scrollTop(scrollTop)
+        @.scrollTop(scrollTop)
 
 
-      @tree.find('a').on 'click', (el) ->
-        line = parseInt($(@).attr 'data-line')
-        column = parseInt($(@).attr 'data-column')
-        editor = atom.workspace.getActiveEditor()
+        @tree.find('a').on 'click', (el) ->
+          line = parseInt($(@).attr 'data-line')
+          column = parseInt($(@).attr 'data-column')
+          editor = atom.workspace.getActiveEditor()
 
-        editor.setCursorBufferPosition [line, column]
-        firstRow = editor.getFirstVisibleScreenRow()
-        editor.scrollToBufferPosition [line + (line - firstRow) - 1, column]
-
-
-  renderCurrentFile: ->
-    fs ?= require 'fs'
-
-    activeEditor = atom.workspace.getActiveEditor()
-    if (!!activeEditor) && (fs.existsSync(activeEditor.getPath()))
-      _s ?= require 'underscore.string'
-      if _s.endsWith(activeEditor.getPath(), '.coffee')
-        promise = @getActiveEditorView()
-        promise.then (activeEditorView) =>
-
-          activeEditorView.className += ' has-navigator'
-          div = document.createElement 'div'
-          div.innerHTML = @.html()
-          activeEditorView.appendChild @
-
-          console.log('getActiveEditorView', activeEditorView);
-
-          # contents-modified for "live" parsing
-          activeEditor.getBuffer().on 'saved', @onChange
-
-
-
-  _hide: ->
-    if @hasParent()
-      @.parent().removeClass 'has-navigator'
-      @.parent()[0].getModel().getBuffer().off 'saved', @onChange
-      @detach()
+          editor.setCursorBufferPosition [line, column]
+          firstRow = editor.getFirstVisibleScreenRow()
+          editor.scrollToBufferPosition [line + (line - firstRow) - 1, column]
 
   onChange: =>
     @parseCurrentFile()
