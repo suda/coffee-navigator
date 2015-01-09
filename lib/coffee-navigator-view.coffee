@@ -93,7 +93,7 @@ class CoffeeNavigatorView extends ResizableView
     $$ ?= require('atom').$$
     fs ?= require 'fs'
 
-    scrollTop = @.scrollTop()
+    scrollTop = @scroller.scrollTop()
     @tree.empty()
 
     if _s.endsWith(@getPath(), '.coffee')
@@ -133,7 +133,7 @@ class CoffeeNavigatorView extends ResizableView
 
           lastIdentation = tag.identation
 
-        @.scrollTop(scrollTop)
+        @scroller.scrollTop(scrollTop)
 
 
         @tree.find('a').on 'click', (el) ->
