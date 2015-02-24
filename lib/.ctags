@@ -6,8 +6,8 @@
 --regex-CoffeeScript=/^[ \t]*([a-zA-Z$_0-9]+\:\:[a-zA-Z$_\.0-9]+)[ \t]*(=|\:)[ \t]*(\(.*\))?[ \t]*(=)>/\1/f,function-bind/
 --regex-CoffeeScript=/^[ \t]*describe[ \t]"(.+)"[ \t]*,[ \t]+[-=]>/\1/f,function/
 --regex-CoffeeScript=/^[ \t]*describe[ \t]'(.+)'[ \t]*,[ \t]+[-=]>/\1/f,function/
---regex-CoffeeScript=/^[ \t]*it[ \t]"([^"]+)"[ \t]*,[ \t]+[-=]>/\1/f,function/
---regex-CoffeeScript=/^[ \t]*it[ \t]'([^']+)'[ \t]*,[ \t]+[-=]>/\1/f,function/
+--regex-CoffeeScript=/^[ \t]*it[ \t]"([^"]+)"[ \t]*,[ \t]*(\(.*\))?[ \t]*[-=]>/\1/f,function/
+--regex-CoffeeScript=/^[ \t]*it[ \t]'([^']+)'[ \t]*,[ \t]*(\(.*\))?[ \t]*[-=]>/\1/f,function/
 --regex-CoffeeScript=/^[ \t]*f+describe[ \t]"(.+)"[ \t]*,[ \t]+[-=]>/focused\: \1/f,function/
 --regex-CoffeeScript=/^[ \t]*f+describe[ \t]'(.+)'[ \t]*,[ \t]+[-=]>/focused: \1/f,function/
 --regex-CoffeeScript=/^[ \t]*f+it[ \t]"([^"]+)"[ \t]*,[ \t]+[-=]>/focused: \1/f,function/
