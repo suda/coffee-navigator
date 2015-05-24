@@ -77,11 +77,11 @@ class CoffeeNavigatorView extends ResizableView
 
   getPath: ->
     # Get path for currently edited file
-    atom.workspace.getActiveEditor()?.getPath()
+    atom.workspace.getActiveTextEditor()?.getPath()
 
   getScopeName: ->
     # Get grammar scope name
-    atom.workspace.getActiveEditor()?.getGrammar()?.scopeName
+    atom.workspace.getActiveTextEditor()?.getGrammar()?.scopeName
 
   log: ->
     if @debug
@@ -89,8 +89,8 @@ class CoffeeNavigatorView extends ResizableView
 
   parseCurrentFile: ->
     _s ?= require 'underscore.string'
-    $ ?= require('atom').$
-    $$ ?= require('atom').$$
+    $ ?= require('atom-space-pen-views').$
+    $$ ?= require('atom-space-pen-views').$$
     fs ?= require 'fs'
 
     scrollTop = @scroller.scrollTop()
@@ -139,7 +139,7 @@ class CoffeeNavigatorView extends ResizableView
         @tree.find('a').on 'click', (el) ->
           line = parseInt($(@).attr 'data-line')
           column = parseInt($(@).attr 'data-column')
-          editor = atom.workspace.getActiveEditor()
+          editor = atom.workspace.getActiveTextEditor()
 
           editor.setCursorBufferPosition [line, column]
           firstRow = editor.getFirstVisibleScreenRow()
